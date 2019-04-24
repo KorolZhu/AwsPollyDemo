@@ -1,12 +1,11 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11542" systemVersion="15G1108" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11524"/>
-        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -22,51 +21,55 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" axis="vertical" alignment="bottom" translatesAutoresizingMaskIntoConstraints="NO" id="j4K-KV-myl">
-                                <rect key="frame" x="16" y="80" width="343" height="276"/>
-                                <subviews>
-                                    <pickerView contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="8Zq-Ql-bdA">
-                                        <rect key="frame" x="0.0" y="0.0" width="343" height="216"/>
-                                    </pickerView>
-                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" ambiguous="YES" placeholderIntrinsicWidth="343" placeholderIntrinsicHeight="30" contentHorizontalAlignment="center" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Type text to synthesize here..." textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="y1l-bY-ZbL">
-                                        <rect key="frame" x="0.0" y="216" width="343" height="30"/>
-                                        <nil key="textColor"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                        <textInputTraits key="textInputTraits"/>
-                                    </textField>
-                                    <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PYn-Lr-fn9">
-                                        <rect key="frame" x="267" y="246" width="76" height="30"/>
-                                        <state key="normal" title="Synthesize"/>
-                                        <connections>
-                                            <action selector="buttonClicked:" destination="BYZ-38-t0r" eventType="touchUpInside" id="1jp-ir-jyT"/>
-                                        </connections>
-                                    </button>
-                                </subviews>
+                            <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8Zq-Ql-bdA">
+                                <rect key="frame" x="31" y="251" width="313" height="216"/>
                                 <constraints>
-                                    <constraint firstItem="y1l-bY-ZbL" firstAttribute="leading" secondItem="j4K-KV-myl" secondAttribute="leading" id="6t8-PJ-Jbv"/>
-                                    <constraint firstItem="8Zq-Ql-bdA" firstAttribute="top" secondItem="j4K-KV-myl" secondAttribute="top" id="8aN-P4-rfV"/>
-                                    <constraint firstAttribute="trailing" secondItem="8Zq-Ql-bdA" secondAttribute="trailing" id="M61-aX-QCM"/>
-                                    <constraint firstItem="8Zq-Ql-bdA" firstAttribute="leading" secondItem="j4K-KV-myl" secondAttribute="leading" id="MH7-r2-5nR"/>
-                                    <constraint firstAttribute="trailing" secondItem="y1l-bY-ZbL" secondAttribute="trailing" id="oRO-hV-iz4"/>
+                                    <constraint firstAttribute="height" constant="216" id="G5F-wk-45e"/>
                                 </constraints>
-                            </stackView>
+                            </pickerView>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="uzy-P9-Dpn">
+                                <rect key="frame" x="31" y="35" width="313" height="200"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="200" id="Hyd-C6-RZz"/>
+                                </constraints>
+                                <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PYn-Lr-fn9">
+                                <rect key="frame" x="137.5" y="516" width="100" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="9b6-QJ-Obs"/>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="100" id="9kX-g7-lwW"/>
+                                </constraints>
+                                <state key="normal" title="Synthesize"/>
+                                <connections>
+                                    <action selector="buttonClicked:" destination="BYZ-38-t0r" eventType="touchUpInside" id="1jp-ir-jyT"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="j4K-KV-myl" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="0T4-Y7-fjR"/>
-                            <constraint firstItem="j4K-KV-myl" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="BDu-ga-reR"/>
-                            <constraint firstItem="j4K-KV-myl" firstAttribute="top" relation="greaterThanOrEqual" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="zOf-gI-owl"/>
+                            <constraint firstItem="uzy-P9-Dpn" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="15" id="Hg5-7D-6K3"/>
+                            <constraint firstItem="PYn-Lr-fn9" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="JLF-wM-eSL"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="uzy-P9-Dpn" secondAttribute="trailing" constant="15" id="V0m-ZC-tgH"/>
+                            <constraint firstItem="PYn-Lr-fn9" firstAttribute="top" secondItem="8Zq-Ql-bdA" secondAttribute="bottom" constant="49" id="j7e-H3-vK3"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="8Zq-Ql-bdA" secondAttribute="trailing" constant="15" id="koZ-zI-gxS"/>
+                            <constraint firstItem="8Zq-Ql-bdA" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="15" id="sOX-OU-yos"/>
+                            <constraint firstItem="8Zq-Ql-bdA" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="sf4-p1-HXT"/>
+                            <constraint firstItem="uzy-P9-Dpn" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="15" id="zFc-OP-dSC"/>
+                            <constraint firstItem="8Zq-Ql-bdA" firstAttribute="top" secondItem="uzy-P9-Dpn" secondAttribute="bottom" constant="16" id="zR3-Gd-Sy3"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="stackView" destination="j4K-KV-myl" id="dvy-Te-jKT"/>
-                        <outlet property="textField" destination="y1l-bY-ZbL" id="nVX-0J-oQv"/>
-                        <outlet property="trailingSpaceConstraint" destination="zOf-gI-owl" id="wdl-Le-u1S"/>
+                        <outlet property="textView" destination="uzy-P9-Dpn" id="W2G-dE-d8x"/>
                         <outlet property="voicePicker" destination="8Zq-Ql-bdA" id="zTO-lg-XeH"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="136.80000000000001" y="133.5832083958021"/>
         </scene>
     </scenes>
 </document>

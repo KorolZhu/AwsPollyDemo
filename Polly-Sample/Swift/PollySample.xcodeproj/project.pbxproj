@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0490B134226EFFB3003CACD8 /* SpeechMarkModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0490B133226EFFB3003CACD8 /* SpeechMarkModel.swift */; };
+		0490B136226F0085003CACD8 /* JSONDecoder+HT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0490B135226F0085003CACD8 /* JSONDecoder+HT.swift */; };
 		177B8A1021CB2EB40051068F /* awsconfiguration.json in Resources */ = {isa = PBXBuildFile; fileRef = 177B8A0F21CB2EB40051068F /* awsconfiguration.json */; };
 		BAEA120E86126419B1B55A6A /* Pods_PollySample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DFBF32066A3749601390ADA /* Pods_PollySample.framework */; };
 		CF9D8AD21DB9385B003D7876 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF9D8AD11DB9385B003D7876 /* AppDelegate.swift */; };
@@ -17,6 +19,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0490B133226EFFB3003CACD8 /* SpeechMarkModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechMarkModel.swift; sourceTree = "<group>"; };
+		0490B135226F0085003CACD8 /* JSONDecoder+HT.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "JSONDecoder+HT.swift"; sourceTree = "<group>"; };
 		177B8A0F21CB2EB40051068F /* awsconfiguration.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = awsconfiguration.json; sourceTree = SOURCE_ROOT; };
 		9DFBF32066A3749601390ADA /* Pods_PollySample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PollySample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B6B7A7056C9BAE356FA8E9EC /* Pods-PollySample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PollySample.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PollySample/Pods-PollySample.debug.xcconfig"; sourceTree = "<group>"; };
@@ -87,6 +91,8 @@
 				CF9D8AD81DB9385B003D7876 /* Assets.xcassets */,
 				CF9D8ADA1DB9385B003D7876 /* LaunchScreen.storyboard */,
 				CF9D8ADD1DB9385B003D7876 /* Info.plist */,
+				0490B133226EFFB3003CACD8 /* SpeechMarkModel.swift */,
+				0490B135226F0085003CACD8 /* JSONDecoder+HT.swift */,
 			);
 			path = PollySample;
 			sourceTree = "<group>";
@@ -218,6 +224,8 @@
 			files = (
 				CF9D8AD41DB9385B003D7876 /* ViewController.swift in Sources */,
 				CF9D8AD21DB9385B003D7876 /* AppDelegate.swift in Sources */,
+				0490B136226F0085003CACD8 /* JSONDecoder+HT.swift in Sources */,
+				0490B134226EFFB3003CACD8 /* SpeechMarkModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

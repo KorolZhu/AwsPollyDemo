@@ -18,10 +18,8 @@ import AVFoundation
 import AWSPolly
 
 class ViewController: UIViewController, UITextViewDelegate, UIPickerViewDelegate, UIPickerViewDataSource {
-	@IBOutlet weak var textField: UITextField!
-	@IBOutlet weak var voicePicker: UIPickerView!
-	@IBOutlet weak var trailingSpaceConstraint: NSLayoutConstraint!
-	@IBOutlet weak var stackView: UIStackView!
+    @IBOutlet weak var textView: UITextView!
+    @IBOutlet weak var voicePicker: UIPickerView!
 
 	let sampleTexts: [AWSPollyVoiceId: String] = [
 		//Danish
@@ -128,12 +126,16 @@ class ViewController: UIViewController, UITextViewDelegate, UIPickerViewDelegate
         AWSPollyVoiceId.gwyneth: "Helo 'na! Gwyneth ydw i. Teipiwch unrhywbeth yma a fe wna i ei ddarllen."
 	]
 
-	var originalConstraint: CGFloat!
 	var audioPlayer = AVPlayer()
 	var selectedVoice: AWSPollyVoiceId!
 
 	var pickerNames: [String] = [String]()
 	var pickerValues: [AWSPollyVoiceId] = [AWSPollyVoiceId]()
+    
+    var speechMarkModels: [SpeechMarkModel] = []
+    var currentModel: SpeechMarkModel?
+    var layers: [CALayer] = []
+
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -175,7 +177,7 @@ class ViewController: UIViewController, UITextViewDelegate, UIPickerViewDelegate
 
 			// Need to update the UI, which is done in the main thread
 			DispatchQueue.main.async {
-				self.textField.placeholder = self.sampleTexts[self.selectedVoice]
+				self.textView.text = self.sampleTexts[self.selectedVoice]
 
 				self.voicePicker.reloadAllComponents()
 				self.voicePicker.selectRow(selectedVoiceIndex, inComponent: 0, animated: false)
@@ -184,16 +186,117 @@ class ViewController: UIViewController, UITextViewDelegate, UIPickerViewDelegate
 			return nil
 		}.waitUntilFinished()
 
-		// Handle keyboard changing frame
-		NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillChange(notification:)), name: .UIKeyboardWillChangeFrame, object: nil)
-
 		// Handle taping anywhere in the view outside text field and picker to dismiss the keyboard
 		let tap = UITapGestureRecognizer(target: self, action: #selector(ViewController.dismissKeyboard))
 		view.addGestureRecognizer(tap)
+        
+        
+        let timeScale = CMTimeScale(NSEC_PER_SEC)
+        let time = CMTime(seconds: 0.011, preferredTimescale: timeScale)
+        
+        audioPlayer.addObserver(self, forKeyPath: "timeControlStatus", options: [.old, .new], context: nil)
+        
+        audioPlayer.addPeriodicTimeObserver(forInterval: time,
+                                                           queue: .main) {
+                                                            [weak self] time in
+                                                            print("play time: \(time)")
+                                                            
+                                                            guard let `self` = self else {
+                                                                return
+                                                            }
+                                                            
+                                                            var tmpCurrentModel: SpeechMarkModel?
+                                                            for model in self.speechMarkModels {
+                                                                if CMTimeGetSeconds(time) * 1000 >= Double(model.time) {
+                                                                    tmpCurrentModel = model
+                                                                } else {
+                                                                    break
+                                                                }
+                                                            }
+                                                            
+                                                            if let tmpCurrentModel = tmpCurrentModel {
+                                                                var textRange = NSMakeRange(NSNotFound, 0)
+                                                                
+                                                                let text = self.textView.text as NSString
+                                                                let textLength = text.length
+                                                                
+                                                                for i in 1..<textLength {
+                                                                    let subStr = text.substring(to: i)
+                                                                    let byteLenght = subStr.data(using: .utf8)!.count
+                                                                    
+                                                                    if byteLenght == tmpCurrentModel.start {
+                                                                        textRange.location = i
+                                                                        textRange.length = (tmpCurrentModel.value as NSString).length
+                                                                        break;
+                                                                    } else if (tmpCurrentModel.start == 0) {
+                                                                        textRange.location = 0
+                                                                        textRange.length = (tmpCurrentModel.value as NSString).length
+                                                                        break;
+                                                                    }
+                                                                }
+                                                                
+                                                                
+                                                                
+                                                                if textRange.location != NSNotFound,
+                                                                    tmpCurrentModel.value != (self.currentModel?.value ?? "") {
+                                                                    self.currentModel = tmpCurrentModel
+                                                                    print("reading \(tmpCurrentModel.value)")
+                                                                    
+                                                                    for layer in self.layers {
+                                                                        layer.removeFromSuperlayer()
+                                                                    }
+                                                                    
+                                                                    self.layers.removeAll()
+                                                                    
+                                                                    self.textView.selectedRange = textRange
+                                                                    if let selectedTextRange = self.textView.selectedTextRange {
+                                                                        if let rects = self.textView.selectionRects(for: selectedTextRange) as? [UITextSelectionRect] {
+                                                                            for rect in rects {
+                                                                                let highRect = self.textView.convert(rect.rect, from: self.textView.textInputView)
+                                                                                
+                                                                                let highLayer = CALayer()
+                                                                                highLayer.frame = highRect
+                                                                                highLayer.backgroundColor = UIColor.blue.cgColor
+                                                                                highLayer.opacity = 0.4
+                                                                                
+                                                                                self.layers.append(highLayer)
+                                                                                self.textView.layer.addSublayer(highLayer)
+                                                                                
+                                                                                
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                   
+                                                                    
+                                                                }
+                                                            }
+                                                            
+                                                            
+        }
 
-		// Save the original constraint to restore it after keyboard is closed
-		originalConstraint = trailingSpaceConstraint.constant
 	}
+    
+    func playerDidFinishPlaying() {
+        for layer in self.layers {
+            layer.removeFromSuperlayer()
+        }
+    }
+    
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        if object as AnyObject? === audioPlayer {
+           if keyPath == "timeControlStatus" {
+                if #available(iOS 10.0, *) {
+                    if audioPlayer.timeControlStatus == .playing {
+                        print("start reading")
+                        if let first = self.speechMarkModels.first {
+                            print("reading \(first.value)")
+                        }
+
+                    }
+                }
+            }
+        }
+    }
 
 	deinit {
 		// Remove the keyboard frame change observer
@@ -209,7 +312,7 @@ class ViewController: UIViewController, UITextViewDelegate, UIPickerViewDelegate
 	func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
 		selectedVoice = pickerValues[row]
 
-		textField.placeholder = sampleTexts[selectedVoice!]
+		textView.text = sampleTexts[selectedVoice!]
 	}
 
 	// Return the title for the given picker row. We get them from our pickerNames
@@ -220,35 +323,6 @@ class ViewController: UIViewController, UITextViewDelegate, UIPickerViewDelegate
 	// Return the number of voice names in the picker
 	func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
 		return pickerNames.count
-	}
-
-	// Handle keyboard frame changes
-	@objc private func keyboardWillChange(notification: NSNotification) {
-		let duration = notification.userInfo![UIKeyboardAnimationDurationUserInfoKey] as! Double
-		let curve = notification.userInfo![UIKeyboardAnimationCurveUserInfoKey] as! UInt
-
-		let currentFrameY = (notification.userInfo![UIKeyboardFrameBeginUserInfoKey] as! NSValue).cgRectValue.origin.y
-		let targetFrameY = (notification.userInfo![UIKeyboardFrameEndUserInfoKey] as! NSValue).cgRectValue.origin.y
-
-		var deltaY: CGFloat
-
-		if currentFrameY > targetFrameY {
-			// Keyboard is being shown
-
-			deltaY = min(targetFrameY - stackView.frame.maxY, 0.0)
-		} else {
-			// Keyboard is starting to hide
-			deltaY = min(originalConstraint - self.trailingSpaceConstraint.constant, targetFrameY - currentFrameY)
-		}
-
-		// Update constraints before changing layout
-		self.view.updateConstraintsIfNeeded()
-
-		UIView.animateKeyframes(withDuration: duration, delay: 0.0, options: UIViewKeyframeAnimationOptions(rawValue: curve), animations: {
-			self.trailingSpaceConstraint.constant += deltaY
-
-			self.view.layoutIfNeeded()
-		}, completion: nil)
 	}
 
 	// Dismiss keyboard (passed to event handler)
@@ -262,6 +336,10 @@ class ViewController: UIViewController, UITextViewDelegate, UIPickerViewDelegate
 	}
 
 	@IBAction func buttonClicked(_ sender: AnyObject) {
+        if textView.text == "" {
+            return
+        }
+        
 		// First, Polly requires an input, which we need to prepare.
 		// Again, we ignore the errors, however this should be handled in
 		// real applications. Here we are using the URL Builder Request,
@@ -270,12 +348,8 @@ class ViewController: UIViewController, UITextViewDelegate, UIPickerViewDelegate
 		let input = AWSPollySynthesizeSpeechURLBuilderRequest()
 
 		// Text to synthesize, taken from the text field
-		if textField.text != "" {
-			input.text = textField.text!
-		} else {
-			input.text = textField.placeholder!
-		}
-
+        input.text = textView.text!
+		
 		// We expect the output in MP3 format
 		input.outputFormat = AWSPollyOutputFormat.mp3
 
@@ -285,18 +359,77 @@ class ViewController: UIViewController, UITextViewDelegate, UIPickerViewDelegate
 		// Create an task to synthesize speech using the given synthesis input
 		let builder = AWSPollySynthesizeSpeechURLBuilder.default().getPreSignedURL(input)
 
-		// Request the URL for synthesis result
-		builder.continueOnSuccessWith { (awsTask: AWSTask<NSURL>) -> Any? in
-			// The result of getPresignedURL task is NSURL.
-			// Again, we ignore the errors in the example.
-			let url = awsTask.result!
-
-			// Try playing the data using the system AVAudioPlayer
-			self.audioPlayer.replaceCurrentItem(with: AVPlayerItem(url: url as URL))
-			self.audioPlayer.play()
-
-			return nil
-		}
+        let input2 = AWSPollySynthesizeSpeechInput()!
+        input2.outputFormat = .json
+        input2.speechMarkTypes = ["word"]
+        input2.text = input.text
+        input2.voiceId = selectedVoice
+        
+        let task2 = AWSPolly.default().synthesizeSpeech(input2)
+        task2.continueOnSuccessWith { (output: AWSTask<AWSPollySynthesizeSpeechOutput>) -> Any? in
+            
+            self.speechMarkModels.removeAll()
+            
+            if let data = output.result?.audioStream {
+                let resultStr = NSString(data: data, encoding: String.Encoding.utf8.rawValue)
+                let temp = resultStr?.components(separatedBy: "\n")
+                
+                
+                guard let resultArr = temp else {
+                    return nil
+                }
+                
+                print("resultStr: -----\n\(resultStr!)\n\n")
+                
+                var models: [SpeechMarkModel] = []
+                for str in resultArr {
+                    if let dic = str.jsonDic() {
+                        if let model = JSONDecoder.decodeJSON(SpeechMarkModel.self, from: dic) {
+                            models.append(model)
+                        }
+                    }
+                }
+                
+                if models.count > 0 {
+                    
+                }
+                
+                self.speechMarkModels = models
+                
+            }
+            
+            // Request the URL for synthesis result
+            builder.continueOnSuccessWith { (awsTask: AWSTask<NSURL>) -> Any? in
+                // The result of getPresignedURL task is NSURL.
+                // Again, we ignore the errors in the example.
+                let url = awsTask.result!
+                
+                // Try playing the data using the system AVAudioPlayer
+                self.audioPlayer.replaceCurrentItem(with: AVPlayerItem(url: url as URL))
+                self.audioPlayer.play()
+                
+                NotificationCenter.default.addObserver(self, selector: #selector(self.playerDidFinishPlaying), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: self.audioPlayer.currentItem)
+                
+                return nil
+            }
+            
+            return nil
+        }
+        
 	}
 }
 
+
+extension String {
+    func jsonDic() -> [String: Any]? {
+        if let data = self.data(using: .utf8) {
+            do {
+                return try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
+        
+        return nil
+    }
+}
